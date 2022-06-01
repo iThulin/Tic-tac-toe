@@ -1,0 +1,55 @@
+h1 {
+    text-align: right;
+    font-size: 1.5rem;
+}
+
+.content {
+    margin: 5vh auto 5vh auto;
+    height: 90vh;
+    width: 90vh;
+    background-color: aqua;
+}
+
+.selectors {
+    height: 17.5vh;
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-evenly;
+    align-items: center;
+    padding-top: 2.5vh;
+}
+
+.optionsContainer {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-evenly;
+    height: 10vh;
+    width: 30%;
+}
+
+.scoreContainer {
+    display: grid;
+    grid-template-columns: auto auto;
+    grid-template-rows: auto auto;
+    gap: 10px;
+    width: 30%;
+}
+
+
+.board {
+    display: grid;
+    justify-content: center;
+    align-items: center;
+    margin: 5vh auto;
+    height: 60vh;
+    width: 60vh;
+    grid-template-columns: 20vh 20vh 20vh;
+    grid-template-rows: 20vh 20vh 20vh;
+}
+
+.space {
+    height: 100%;
+    width: 100%;
+    border: 3px solid black;
+}
