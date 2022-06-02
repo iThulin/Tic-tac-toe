@@ -1,7 +1,7 @@
 const gameBoard = (() => {
     // controls the board state, adds values when called by the player controller,
     //clears the game board.
-    let board = new Array(9).fill(" ");
+    let board = new Array(9).fill(' ');
 
     function getState() {
         console.log(`Board State: 
@@ -25,7 +25,7 @@ const gameBoard = (() => {
 
     function clear() {
         for (let i = 0; i < board.length; i++) {
-            board[i] = " ";
+            board[i] = ' ';
         }
         getState()
     };
@@ -54,7 +54,7 @@ const Player = (computerPlayer, difficulty, gamePiece, score) => {
 
     const getScore = () => {return score}
 
-    const getGamePeice = () => {
+    const getGamepiece = () => {
         return gamePiece;
     };
     
@@ -62,18 +62,18 @@ const Player = (computerPlayer, difficulty, gamePiece, score) => {
         getValues, 
         incrementScore, 
         getScore,
-        getGamePeice
+        getGamepiece
     };
 };
 
 var gameController = (() => {
-    let computer = Player(true, "Easy", "Y", 0)
-    let user = Player(false, "None", "X", 0)
+    let computer = Player(true, 'Easy', 'O', 0)
+    let user = Player(false, 'None', 'X', 0)
 
     const playerTurn = (index) => {
         const space = gameBoard.getSpace(index);
         if (space == undefined) {
-            gameBoard.assignValue(index, user.getGamePeice());
+            gameBoard.assignValue(index, user.getGamepiece());
             displayController.updateSpaces();
         }
     }
@@ -85,8 +85,8 @@ var gameController = (() => {
 
 var displayController = (() => {
     const visualBoard = Array.from(document.querySelectorAll('button.space'));
-    let playerScore = document.getElementById("playerScore");
-    let computerScore = document.getElementById("computerScore");
+    let playerScore = document.getElementById('playerScore');
+    let computerScore = document.getElementById('computerScore');
 
     const updateScore = () => {
         playerScore.textContent = `${user.getScore()}`
@@ -110,7 +110,7 @@ var displayController = (() => {
 
         // event listener to change player's selection to X
 
-        // event listener to change player's selection to Y
+        // event listener to change player's selection to O
 
     })();
 
