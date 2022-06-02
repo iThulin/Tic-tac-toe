@@ -1,4 +1,6 @@
 const gameBoard = (() => {
+    // controls the board state, adds values when called by the player controller,
+    //clears the game board.
     let board = new Array(9).fill(" ");
 
     function getState() {
@@ -27,8 +29,24 @@ const gameBoard = (() => {
     };
 })();
 
-gameBoard.assignValue(2, "O");
-gameBoard.assignValue(4, "X");
-gameBoard.assignValue(5, "O");
-gameBoard.assignValue(0, "X");
-gameBoard.clear();
+const displayController = (() => {
+
+})();
+
+const Player = (computerPlayer, difficulty, gamePiece, score) => {
+    const getValues = () => {
+        console.log(`Computer: ${computerPlayer}
+        \nDifficulty: ${difficulty}
+        \nGame Piece: ${gamePiece}
+        \nScore: ${score}`)
+    };
+    const incrementScore = () => {score += 1}
+    const getScore = () => {return score}
+    
+    return {getValues, incrementScore, getScore};
+}
+
+let computer = Player(true, "Easy", "Y", 4)
+let user = Player(false, "None", "X", 0)
+computer.getValues();
+user.getValues();
