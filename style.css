@@ -10,13 +10,6 @@ h1 {
     font-weight: 400;
 }
 
-p {
-    font-size: 10rem;
-    font-family: 'Ubuntu', sans-serif;
-    font-weight: 700;
-    text-align: center;
-}
-
 .content {
     margin: 5vh auto 5vh auto;
     height: 90vh;
@@ -123,6 +116,10 @@ p {
     background-color: #d1cfc7;
     border-style: solid;
     border-color: black;
+    font-size: 10rem;
+    font-family: 'Ubuntu', sans-serif;
+    font-weight: 700;
+    text-align: center;
 }
 .no-r {
     border-right: none;

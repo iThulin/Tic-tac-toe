@@ -10,10 +10,18 @@ const gameBoard = (() => {
             \n${board[6]} | ${board[7]} | ${board[8]}`)
     };
 
+    const getSpace = (index) => {
+        board[index]
+    }
+
     function assignValue(index, value) {
         board[index] = value;
         getState()
     };
+
+    const getValue = (index) => {
+        return board[index]
+    }
 
     function clear() {
         for (let i = 0; i < board.length; i++) {
@@ -24,13 +32,11 @@ const gameBoard = (() => {
     
     return {
         getState,
+        getSpace,
         assignValue,
+        getValue,
         clear
     };
-})();
-
-const displayController = (() => {
-
 })();
 
 const Player = (computerPlayer, difficulty, gamePiece, score) => {
@@ -40,13 +46,79 @@ const Player = (computerPlayer, difficulty, gamePiece, score) => {
         \nGame Piece: ${gamePiece}
         \nScore: ${score}`)
     };
-    const incrementScore = () => {score += 1}
-    const getScore = () => {return score}
-    
-    return {getValues, incrementScore, getScore};
-}
 
-let computer = Player(true, "Easy", "Y", 4)
-let user = Player(false, "None", "X", 0)
-computer.getValues();
-user.getValues();
+    const incrementScore = () => {
+        score += 1
+        display.updateScore();
+    };
+
+    const getScore = () => {return score}
+
+    const getGamePeice = () => {
+        return gamePiece;
+    };
+    
+    return {
+        getValues, 
+        incrementScore, 
+        getScore,
+        getGamePeice
+    };
+};
+
+var gameController = (() => {
+    let computer = Player(true, "Easy", "Y", 0)
+    let user = Player(false, "None", "X", 0)
+
+    const playerTurn = (index) => {
+        const space = gameBoard.getSpace(index);
+        if (space == undefined) {
+            gameBoard.assignValue(index, user.getGamePeice());
+            displayController.updateSpaces();
+        }
+    }
+
+    return {
+        playerTurn
+    }
+})();
+
+var displayController = (() => {
+    const visualBoard = Array.from(document.querySelectorAll('button.space'));
+    let playerScore = document.getElementById("playerScore");
+    let computerScore = document.getElementById("computerScore");
+
+    const updateScore = () => {
+        playerScore.textContent = `${user.getScore()}`
+        computerScore.textContent = `${computer.getScore()}`;
+    };
+
+    const updateSpaces = () => {
+        for (let i = 0; i < visualBoard.length; i++) {
+            visualBoard[i].textContent = gameBoard.getValue(i);
+        }
+    }
+
+    const _init = (() => {
+        for (let i = 0; i < visualBoard.length; i++) {
+            space = visualBoard[i];
+            console.log(space)
+            space.addEventListener('click', gameController.playerTurn.bind(space, i));
+        }
+
+        // event listener to change computer difficulty
+
+        // event listener to change player's selection to X
+
+        // event listener to change player's selection to Y
+
+    })();
+
+    return {
+        updateScore,
+        updateSpaces
+    }
+})();
+
+let display = displayController;
+
