@@ -143,3 +143,7 @@ h1 {
 .left-bottom {
     border-radius: 0 0 0 20px;
 }
+
+.winning-move {
+    color: green;
+}

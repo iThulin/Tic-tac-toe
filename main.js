@@ -7,7 +7,7 @@ const gameBoard = (() => {
         console.log(`\nBoard State: 
             \n${board[0]} | ${board[1]} | ${board[2]}
             \n${board[3]} | ${board[4]} | ${board[5]}
-            \n${board[6]} | ${board[7]} | ${board[8]}`)
+            \n${board[6]} | ${board[7]} | ${board[8]}\n `)
     };
 
     const getSpace = (index) => {
@@ -29,6 +29,7 @@ const gameBoard = (() => {
         }
         getState();
         displayController.updateSpaces();
+        displayController.clearWinningMoves();
     };
     
     return {
@@ -106,11 +107,14 @@ var gameController = ((index) => {
             }
             console.log (`Set: [${winningSets[i]}], X: ${consecutiveX}, O: ${consecutiveO}`)
             if (consecutiveX == 3)  {
-                console.log('X wins');
+                console.log(`Winning Set: [${winningSets[i]}]`)
+                displayController.showWinningMoves(winningSets[i]);
+                displayController.lockButtons();
                 return true
             }
             else if (consecutiveO == 3) {
-                console.log('O wins');
+                displayController.showWinningMoves(winningSets[i]);
+                displayController.lockButtons();
                 return true;
             }
             else {
@@ -125,6 +129,7 @@ var gameController = ((index) => {
         user.setGamePiece(selection)
         user.getValues();
         gameBoard.clear();
+        displayController.unlockButtons();
         }
     }
 
@@ -161,14 +166,38 @@ var displayController = (() => {
             oButton.classList.remove('active');
             oButton.classList.add('inactive');
             gameController.setGamePiece('user','X');
-        }
+        };
         if (buttonPressed == 'O') {
             oButton.classList.remove('inactive');
             oButton.classList.add('active');
             xButton.classList.remove('active');
             xButton.classList.add('inactive');
             gameController.setGamePiece('user','O');
-        }
+        };
+    };
+
+    const showWinningMoves = (winningIndexes) => {
+        for (let i = 0; i < 3; i++) {
+            visualBoard[winningIndexes[i]].classList.add('winning-move');
+        };
+    };
+
+    const clearWinningMoves = () => {
+        for (let i = 0; i < visualBoard.length; i++) {
+            visualBoard[i].classList.remove('winning-move')
+        };
+    };
+
+    const lockButtons = () => {
+        for (let i = 0; i < visualBoard.length; i++) {
+            visualBoard[i].disabled = true;
+        };
+    }
+
+    const unlockButtons = () => {
+        for (let i = 0; i < visualBoard.length; i++) {
+            visualBoard[i].disabled = false;
+        };
     }
 
     const _init = (() => {
@@ -190,7 +219,11 @@ var displayController = (() => {
     return {
         updateScore,
         updateSpaces,
-        updateButtons
+        updateButtons,
+        showWinningMoves,
+        clearWinningMoves,
+        lockButtons, 
+        unlockButtons
     };
 })();
 
