@@ -4,7 +4,7 @@ const gameBoard = (() => {
     let board = new Array(9).fill(' ');
 
     function getState() {
-        console.log(`Board State: 
+        console.log(`\nBoard State: 
             \n${board[0]} | ${board[1]} | ${board[2]}
             \n${board[3]} | ${board[4]} | ${board[5]}
             \n${board[6]} | ${board[7]} | ${board[8]}`)
@@ -27,7 +27,8 @@ const gameBoard = (() => {
         for (let i = 0; i < board.length; i++) {
             board[i] = ' ';
         }
-        getState()
+        getState();
+        displayController.updateSpaces();
     };
     
     return {
@@ -54,6 +55,10 @@ const Player = (computerPlayer, difficulty, gamePiece, score) => {
 
     const getScore = () => {return score}
 
+    const setGamePiece = (selection) => {
+        gamePiece = selection
+    }
+
     const getGamePiece = () => {
         return gamePiece;
     };
@@ -62,6 +67,7 @@ const Player = (computerPlayer, difficulty, gamePiece, score) => {
         getValues, 
         incrementScore, 
         getScore,
+        setGamePiece,
         getGamePiece
     };
 };
@@ -95,11 +101,10 @@ var gameController = ((index) => {
         for (let i = 0; i < winningSets.length; i++) {
             for (let j = 0; j < 3; j++) {
                 let spaceValue = gameBoard.getValue(winningSets[i][j])
-                console.log(spaceValue)
                 if (spaceValue == "X") consecutiveX++;
                 if (spaceValue == "O") consecutiveO++;
             }
-            console.log (`X's: ${consecutiveX}, O's: ${consecutiveO}`)
+            console.log (`Set: [${winningSets[i]}], X: ${consecutiveX}, O: ${consecutiveO}`)
             if (consecutiveX == 3)  {
                 console.log('X wins');
                 return true
@@ -115,9 +120,18 @@ var gameController = ((index) => {
         };
     };
 
+    const setGamePiece = (player, selection) => {
+        if (player == 'user') {
+        user.setGamePiece(selection)
+        user.getValues();
+        gameBoard.clear();
+        }
+    }
+
     return {
         playerTurn,
-        checkForWinner
+        checkForWinner,
+        setGamePiece
     };
 })();
 
@@ -125,6 +139,8 @@ var displayController = (() => {
     const visualBoard = Array.from(document.querySelectorAll('button.space'));
     let playerScore = document.getElementById('playerScore');
     let computerScore = document.getElementById('computerScore');
+    let xButton = document.getElementById('X');
+    let oButton = document.getElementById('O');
 
     const updateScore = () => {
         playerScore.textContent = `${user.getScore()}`
@@ -138,10 +154,26 @@ var displayController = (() => {
         gameController.checkForWinner();
     };
 
+    const updateButtons = (buttonPressed) => {
+        if (buttonPressed == 'X') {
+            xButton.classList.remove('inactive');
+            xButton.classList.add('active');
+            oButton.classList.remove('active');
+            oButton.classList.add('inactive');
+            gameController.setGamePiece('user','X');
+        }
+        if (buttonPressed == 'O') {
+            oButton.classList.remove('inactive');
+            oButton.classList.add('active');
+            xButton.classList.remove('active');
+            xButton.classList.add('inactive');
+            gameController.setGamePiece('user','O');
+        }
+    }
+
     const _init = (() => {
         for (let i = 0; i < visualBoard.length; i++) {
             space = visualBoard[i];
-            console.log(space)
             space.addEventListener('click', gameController.playerTurn.bind(space, i));
         };
 
@@ -150,12 +182,15 @@ var displayController = (() => {
         // event listener to change player's selection to X
 
         // event listener to change player's selection to O
+        xButton.addEventListener('click', () => updateButtons('X'))
+        oButton.addEventListener('click', () => updateButtons('O'))
 
     })();
 
     return {
         updateScore,
-        updateSpaces
+        updateSpaces,
+        updateButtons
     };
 })();
 
