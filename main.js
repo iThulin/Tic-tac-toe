@@ -54,7 +54,7 @@ const Player = (computerPlayer, difficulty, gamePiece, score) => {
 
     const getScore = () => {return score}
 
-    const getGamepiece = () => {
+    const getGamePiece = () => {
         return gamePiece;
     };
     
@@ -62,25 +62,63 @@ const Player = (computerPlayer, difficulty, gamePiece, score) => {
         getValues, 
         incrementScore, 
         getScore,
-        getGamepiece
+        getGamePiece
     };
 };
 
-var gameController = (() => {
+var gameController = ((index) => {
     let computer = Player(true, 'Easy', 'O', 0)
     let user = Player(false, 'None', 'X', 0)
+    const space = gameBoard.getSpace(index);
 
     const playerTurn = (index) => {
-        const space = gameBoard.getSpace(index);
         if (space == undefined) {
-            gameBoard.assignValue(index, user.getGamepiece());
+            gameBoard.assignValue(index, user.getGamePiece());
             displayController.updateSpaces();
-        }
-    }
+        };
+    };
+
+    const checkForWinner = () => {
+        let consecutiveX = 0;
+        let consecutiveO = 0;
+
+        const winningSets = [[0, 1, 2],
+                             [3, 4, 5], 
+                             [6, 7, 8], 
+                             [0, 3, 6], 
+                             [1, 4, 7], 
+                             [2, 5, 8], 
+                             [0, 4, 8], 
+                             [2, 4, 6]]
+
+        // iterate over winning sets to determine if they are full of X or O
+        for (let i = 0; i < winningSets.length; i++) {
+            for (let j = 0; j < 3; j++) {
+                let spaceValue = gameBoard.getValue(winningSets[i][j])
+                console.log(spaceValue)
+                if (spaceValue == "X") consecutiveX++;
+                if (spaceValue == "O") consecutiveO++;
+            }
+            console.log (`X's: ${consecutiveX}, O's: ${consecutiveO}`)
+            if (consecutiveX == 3)  {
+                console.log('X wins');
+                return true
+            }
+            else if (consecutiveO == 3) {
+                console.log('O wins');
+                return true;
+            }
+            else {
+                consecutiveX = 0;
+                consecutiveO = 0;
+            };
+        };
+    };
 
     return {
-        playerTurn
-    }
+        playerTurn,
+        checkForWinner
+    };
 })();
 
 var displayController = (() => {
@@ -97,14 +135,15 @@ var displayController = (() => {
         for (let i = 0; i < visualBoard.length; i++) {
             visualBoard[i].textContent = gameBoard.getValue(i);
         }
-    }
+        gameController.checkForWinner();
+    };
 
     const _init = (() => {
         for (let i = 0; i < visualBoard.length; i++) {
             space = visualBoard[i];
             console.log(space)
             space.addEventListener('click', gameController.playerTurn.bind(space, i));
-        }
+        };
 
         // event listener to change computer difficulty
 
@@ -117,7 +156,7 @@ var displayController = (() => {
     return {
         updateScore,
         updateSpaces
-    }
+    };
 })();
 
 let display = displayController;
