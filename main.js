@@ -31,13 +31,18 @@ const gameBoard = (() => {
         displayController.updateSpaces();
         displayController.clearWinningMoves();
     };
+
+    const exportBoard = () => {
+        return board
+    }
     
     return {
         getState,
         getSpace,
         assignValue,
         getValue,
-        clear
+        clear,
+        exportBoard
     };
 })();
 
@@ -51,7 +56,7 @@ const Player = (computerPlayer, difficulty, gamePiece, score) => {
 
     const incrementScore = () => {
         score += 1
-        display.updateScore();
+        displayController.updateScore();
     };
 
     const getScore = () => {return score}
@@ -60,9 +65,7 @@ const Player = (computerPlayer, difficulty, gamePiece, score) => {
         gamePiece = selection
     }
 
-    const getGamePiece = () => {
-        return gamePiece;
-    };
+    const getGamePiece = () => {return gamePiece};
     
     return {
         getValues, 
@@ -73,16 +76,55 @@ const Player = (computerPlayer, difficulty, gamePiece, score) => {
     };
 };
 
+var aiController = (() => {
+    let aiBoard = gameBoard.exportBoard();
+    let possibleMoves = [];
+
+    const updateBoardState = () => {
+        aiBoard = gameBoard.exportBoard();
+        possibleMoves = [];
+        console.log(`AI state: ${aiBoard}`)
+        for (let i = 0; i < 9; i++) {
+            console.log(aiBoard[i])
+            if (aiBoard[i] == ' ') possibleMoves.push(i)
+        }
+        console.log(`Possible moves: ${possibleMoves}`);
+        return possibleMoves;
+    }
+
+    const selectRandomMove = () => {
+        updateBoardState()
+        let computerMove = possibleMoves[Math.floor((Math.random() * possibleMoves.length))]
+        console.log(`Computer's move: ${computerMove}`)
+        return computerMove
+    }
+
+    return {
+        updateBoardState,
+        selectRandomMove
+    };
+})();
+
 var gameController = ((index) => {
+    let isGameRunning = Boolean
+    let playerIsThinking = Boolean
     let computer = Player(true, 'Easy', 'O', 0)
     let user = Player(false, 'None', 'X', 0)
     const space = gameBoard.getSpace(index);
 
-    const playerTurn = (index) => {
-        if (space == undefined) {
+    const takeTurn = (index) => {
+        if (gameBoard.getValue(index) == ' ') {
+            // player's turn
             gameBoard.assignValue(index, user.getGamePiece());
+            checkForWinner();
             displayController.updateSpaces();
-        };
+
+            // computer's turn
+            gameBoard.assignValue(aiController.selectRandomMove(), computer.getGamePiece());
+            checkForWinner();
+            displayController.updateSpaces();
+        }
+        else console.log("Please select a valid square.")
     };
 
     const checkForWinner = () => {
@@ -105,7 +147,7 @@ var gameController = ((index) => {
                 if (spaceValue == "X") consecutiveX++;
                 if (spaceValue == "O") consecutiveO++;
             }
-            console.log (`Set: [${winningSets[i]}], X: ${consecutiveX}, O: ${consecutiveO}`)
+            //console.log (`Set: [${winningSets[i]}], X: ${consecutiveX}, O: ${consecutiveO}`)
             if (consecutiveX == 3)  {
                 console.log(`Winning Set: [${winningSets[i]}]`)
                 displayController.showWinningMoves(winningSets[i]);
@@ -134,7 +176,7 @@ var gameController = ((index) => {
     }
 
     return {
-        playerTurn,
+        takeTurn,
         checkForWinner,
         setGamePiece
     };
@@ -156,7 +198,6 @@ var displayController = (() => {
         for (let i = 0; i < visualBoard.length; i++) {
             visualBoard[i].textContent = gameBoard.getValue(i);
         }
-        gameController.checkForWinner();
     };
 
     const updateButtons = (buttonPressed) => {
@@ -203,7 +244,7 @@ var displayController = (() => {
     const _init = (() => {
         for (let i = 0; i < visualBoard.length; i++) {
             space = visualBoard[i];
-            space.addEventListener('click', gameController.playerTurn.bind(space, i));
+            space.addEventListener('click', gameController.takeTurn.bind(space, i));
         };
 
         // event listener to change computer difficulty
@@ -227,5 +268,7 @@ var displayController = (() => {
     };
 })();
 
-let display = displayController;
-
+window.onload = () => {
+    gameController.isGameRunning = true;
+    gameController.playerIsThinking = false;
+};
