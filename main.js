@@ -4,7 +4,7 @@ const gameBoard = (() => {
     let board = new Array(9).fill(' ');
 
     function getState() {
-        console.log(`\nBoard State: 
+        console.log(`Board State: 
             \n${board[0]} | ${board[1]} | ${board[2]}
             \n${board[3]} | ${board[4]} | ${board[5]}
             \n${board[6]} | ${board[7]} | ${board[8]}\n `)
@@ -83,19 +83,17 @@ var aiController = (() => {
     const updateBoardState = () => {
         aiBoard = gameBoard.exportBoard();
         possibleMoves = [];
-        console.log(`AI state: ${aiBoard}`)
         for (let i = 0; i < 9; i++) {
-            console.log(aiBoard[i])
-            if (aiBoard[i] == ' ') possibleMoves.push(i)
+            if (aiBoard[i] == ' ') possibleMoves.push(i);
         }
         console.log(`Possible moves: ${possibleMoves}`);
         return possibleMoves;
     }
 
     const selectRandomMove = () => {
-        updateBoardState()
-        let computerMove = possibleMoves[Math.floor((Math.random() * possibleMoves.length))]
-        console.log(`Computer's move: ${computerMove}`)
+        updateBoardState();
+        let computerMove = possibleMoves[Math.floor((Math.random() * possibleMoves.length))];
+        console.log(`Computer's move: ${computerMove}`);
         return computerMove
     }
 
@@ -106,52 +104,44 @@ var aiController = (() => {
 })();
 
 var gameController = ((index) => {
-    let isGameRunning = Boolean
-    let playerIsThinking = Boolean
     let computer = Player(true, 'Easy', 'O', 0)
     let user = Player(false, 'None', 'X', 0)
-    const space = gameBoard.getSpace(index);
 
-    const takeTurn = (index) => {
+    const computerTurn = () => {
+        gameBoard.assignValue(aiController.selectRandomMove(), computer.getGamePiece())
+        checkForWinner();
+        displayController.updateSpaces();
+    };
+
+    const playerTurn = (index) => {
+        console.log(`Player's move: ${index}`)
+        gameBoard.assignValue(index, user.getGamePiece());
+        checkForWinner();
+        displayController.updateSpaces();
+    };
+
+    const playRound = (index) => {
+        console.log(`Index: ${index}`)
 
         if (user.getGamePiece() == 'X'){
             if (gameBoard.getValue(index) == ' ') {
-                // player's turn
-                gameBoard.assignValue(index, user.getGamePiece());
-                checkForWinner();
-                displayController.updateSpaces();
-
-                // computer's turn
-                gameBoard.assignValue(aiController.selectRandomMove(), computer.getGamePiece())
-                checkForWinner();
-                displayController.updateSpaces();
+                playerTurn(index);
+                computerTurn();
             }
             else console.log("Please select a valid square.")
-        }
+        };
         if (user.getGamePiece() == 'O') {
+            if (index == 'first') {
+               computerTurn();
+            };
+
             if (gameBoard.getValue(index) == ' ') {
-                // computer's turn
-                gameBoard.assignValue(aiController.selectRandomMove(), computer.getGamePiece())
-                checkForWinner();
-                displayController.updateSpaces();
-
-                // player's turn
-                gameBoard.assignValue(index, user.getGamePiece());
-                checkForWinner();
-                displayController.updateSpaces();
+                computerTurn();
+               playerTurn(index);
             }
-            else if (index == 'first') {
-                // computer's turn
-                gameBoard.assignValue(aiController.selectRandomMove(), computer.getGamePiece())
-                checkForWinner();
-                displayController.updateSpaces();
-            }
-
-            else console.log("Please select a valid square.")
-        }
+            else console.log("Please select a valid square.");
+        };
     };
-
-    
 
     const checkForWinner = () => {
         let consecutiveX = 0;
@@ -206,9 +196,11 @@ var gameController = ((index) => {
     }
 
     return {
-        takeTurn,
+        playRound,
         checkForWinner,
-        setGamePiece
+        setGamePiece,
+        computerTurn,
+        playerTurn
     };
 })();
 
@@ -246,7 +238,7 @@ var displayController = (() => {
             xButton.classList.add('inactive');
             gameController.setGamePiece('user','O');
             gameController.setGamePiece('computer', 'X')
-            gameController.takeTurn('first');
+            gameController.playRound('first');
         };
     };
 
@@ -277,14 +269,11 @@ var displayController = (() => {
     const _init = (() => {
         for (let i = 0; i < visualBoard.length; i++) {
             space = visualBoard[i];
-            space.addEventListener('click', gameController.takeTurn.bind(space, i));
+            space.addEventListener('click', gameController.playRound.bind(space, i));
         };
 
         // event listener to change computer difficulty
 
-        // event listener to change player's selection to X
-
-        // event listener to change player's selection to O
         xButton.addEventListener('click', () => updateButtons('X'))
         oButton.addEventListener('click', () => updateButtons('O'))
 
@@ -300,8 +289,3 @@ var displayController = (() => {
         unlockButtons
     };
 })();
-
-window.onload = () => {
-    gameController.isGameRunning = true;
-    gameController.playerIsThinking = false;
-};
