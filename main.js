@@ -113,20 +113,42 @@ var gameController = ((index) => {
     const space = gameBoard.getSpace(index);
 
     const takeTurn = (index) => {
-        if (gameBoard.getValue(index) == ' ') {
-            // player's turn
-            gameBoard.assignValue(index, user.getGamePiece());
-            checkForWinner();
-            displayController.updateSpaces();
 
-            // computer's turn
-            let computerTurn = gameBoard.assignValue(aiController.selectRandomMove(), computer.getGamePiece())
-            setTimeout(computerTurn, 10000)
-            //setTimeout(gameBoard.assignValue(aiController.selectRandomMove(), computer.getGamePiece()), 1000);
-            checkForWinner();
-            displayController.updateSpaces();
+        if (user.getGamePiece() == 'X'){
+            if (gameBoard.getValue(index) == ' ') {
+                // player's turn
+                gameBoard.assignValue(index, user.getGamePiece());
+                checkForWinner();
+                displayController.updateSpaces();
+
+                // computer's turn
+                gameBoard.assignValue(aiController.selectRandomMove(), computer.getGamePiece())
+                checkForWinner();
+                displayController.updateSpaces();
+            }
+            else console.log("Please select a valid square.")
         }
-        else console.log("Please select a valid square.")
+        if (user.getGamePiece() == 'O') {
+            if (gameBoard.getValue(index) == ' ') {
+                // computer's turn
+                gameBoard.assignValue(aiController.selectRandomMove(), computer.getGamePiece())
+                checkForWinner();
+                displayController.updateSpaces();
+
+                // player's turn
+                gameBoard.assignValue(index, user.getGamePiece());
+                checkForWinner();
+                displayController.updateSpaces();
+            }
+            else if (index == 'first') {
+                // computer's turn
+                gameBoard.assignValue(aiController.selectRandomMove(), computer.getGamePiece())
+                checkForWinner();
+                displayController.updateSpaces();
+            }
+
+            else console.log("Please select a valid square.")
+        }
     };
 
     
@@ -224,6 +246,7 @@ var displayController = (() => {
             xButton.classList.add('inactive');
             gameController.setGamePiece('user','O');
             gameController.setGamePiece('computer', 'X')
+            gameController.takeTurn('first');
         };
     };
 
