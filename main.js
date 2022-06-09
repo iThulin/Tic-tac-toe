@@ -50,8 +50,7 @@ const Player = (computerPlayer, difficulty, gamePiece, score) => {
     const getValues = () => {
         console.log(`Computer: ${computerPlayer}
         \nDifficulty: ${difficulty}
-        \nGame Piece: ${gamePiece}
-        \nScore: ${score}`)
+        \nGame Piece: ${gamePiece}`)
     };
 
     const incrementScore = () => {
@@ -103,20 +102,20 @@ var aiController = (() => {
     };
 })();
 
-var gameController = ((index) => {
-    let computer = Player(true, 'Easy', 'O', 0)
-    let user = Player(false, 'None', 'X', 0)
+var gameController = (() => {
+    let computer = Player(true, 'Easy', 'O')
+    let user = Player(false, 'None', 'X')
+    let playerScore = 0;
+    let computerScore = 0;
 
     const computerTurn = () => {
         gameBoard.assignValue(aiController.selectRandomMove(), computer.getGamePiece())
-        checkForWinner();
         displayController.updateSpaces();
     };
 
     const playerTurn = (index) => {
         console.log(`Player's move: ${index}`)
         gameBoard.assignValue(index, user.getGamePiece());
-        checkForWinner();
         displayController.updateSpaces();
     };
 
@@ -126,7 +125,12 @@ var gameController = ((index) => {
         if (user.getGamePiece() == 'X'){
             if (gameBoard.getValue(index) == ' ') {
                 playerTurn(index);
-                computerTurn();
+                if (checkForWinner() == false) {
+                    computerTurn()
+                    checkForWinner()
+                }
+                //computerTurn();
+                //if (checkForWinner() == true) return
             }
             else console.log("Please select a valid square.")
         };
@@ -137,7 +141,10 @@ var gameController = ((index) => {
 
             if (gameBoard.getValue(index) == ' ') {
                 computerTurn();
-               playerTurn(index);
+                if (checkForWinner() == false) {
+                    playerTurn(index)
+                    checkForWinner()
+                }
             }
             else console.log("Please select a valid square.");
         };
@@ -168,18 +175,21 @@ var gameController = ((index) => {
                 console.log(`Winning Set: [${winningSets[i]}]`)
                 displayController.showWinningMoves(winningSets[i]);
                 displayController.lockButtons();
-                return true
+                gameController.scoreGame('X');
+                return 
             }
-            else if (consecutiveO == 3) {
+            if (consecutiveO == 3) {
                 displayController.showWinningMoves(winningSets[i]);
                 displayController.lockButtons();
-                return true;
+                gameController.scoreGame('O');
+                return
             }
             else {
                 consecutiveX = 0;
                 consecutiveO = 0;
             };
         };
+        return false
     };
 
     const setGamePiece = (player, selection) => {
@@ -191,29 +201,52 @@ var gameController = ((index) => {
         }
         if (player == 'computer') {
             computer.setGamePiece(selection);
-            computer.getValues();
+            //computer.getValues();
         }
     }
+
+    const scoreGame = (winningPiece) => {
+        console.log(`Player Piece: ${user.getGamePiece()} Winning Piece: ${winningPiece}`)
+        if (user.getGamePiece() == winningPiece) {
+            playerScore += 1;
+            console.log(`playerScore: ${playerScore}`)
+            displayController.updateScore();
+        }
+        if (computer.getGamePiece() == winningPiece) {
+            computerScore += 1;
+            console.log(`computerScore: ${computerScore}`)
+            displayController.updateScore();
+        }
+    }
+
+    const returnPlayerScore = () => {
+        return playerScore
+    };
+
+    const returnComputerScore = () => {
+        return computerScore
+    };
 
     return {
         playRound,
         checkForWinner,
         setGamePiece,
         computerTurn,
-        playerTurn
+        playerTurn, 
+        scoreGame, 
+        returnPlayerScore,
+        returnComputerScore
     };
 })();
 
 var displayController = (() => {
     const visualBoard = Array.from(document.querySelectorAll('button.space'));
-    let playerScore = document.getElementById('playerScore');
-    let computerScore = document.getElementById('computerScore');
     let xButton = document.getElementById('X');
     let oButton = document.getElementById('O');
 
     const updateScore = () => {
-        playerScore.textContent = `${user.getScore()}`
-        computerScore.textContent = `${computer.getScore()}`;
+        document.getElementById('playerScore').textContent = `${gameController.returnPlayerScore()}`;
+        document.getElementById('computerScore').textContent = `${gameController.returnComputerScore()}`;
     };
 
     const updateSpaces = () => {
