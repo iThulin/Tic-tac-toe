@@ -138,11 +138,10 @@ var gameController = (() => {
             if (index == 'first') {
                computerTurn();
             };
-
             if (gameBoard.getValue(index) == ' ') {
-                computerTurn();
+                playerTurn(index);
                 if (checkForWinner() == false) {
-                    playerTurn(index)
+                    computerTurn()
                     checkForWinner()
                 }
             }
