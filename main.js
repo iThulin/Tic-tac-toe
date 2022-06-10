@@ -275,12 +275,14 @@ var displayController = (() => {
         for (let i = 0; i < 3; i++) {
             visualBoard[winningIndexes[i]].classList.add('winning-move');
         };
+        showNewGameMessage();
     };
 
     const clearWinningMoves = () => {
         for (let i = 0; i < visualBoard.length; i++) {
             visualBoard[i].classList.remove('winning-move');
         };
+        hideNewGameMessage();
     };
 
     const lockButtons = () => {
@@ -294,6 +296,14 @@ var displayController = (() => {
             visualBoard[i].disabled = false;
         };
     };
+
+    const showNewGameMessage = () => {
+        document.getElementById('newGameMessage').style.visibility = 'visible';
+    }
+
+    const hideNewGameMessage = () => {
+        document.getElementById('newGameMessage').style.visibility = 'hidden';
+    }
 
     const _init = (() => {
         for (let i = 0; i < visualBoard.length; i++) {
@@ -314,6 +324,8 @@ var displayController = (() => {
         showWinningMoves,
         clearWinningMoves,
         lockButtons, 
-        unlockButtons
+        unlockButtons,
+        showNewGameMessage,
+        hideNewGameMessage
     };
 })();

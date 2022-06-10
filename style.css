@@ -147,3 +147,12 @@ h1 {
 .winning-move {
     color: green;
 }
+
+#newGameMessage {
+    position: absolute;
+    text-align: center;
+    display: inline;
+    width: 100%;
+    top: 18vh;
+    visibility: hidden;
+}
