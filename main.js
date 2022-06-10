@@ -76,29 +76,87 @@ const Player = (computerPlayer, difficulty, gamePiece, score) => {
 };
 
 var aiController = (() => {
-    let aiBoard = gameBoard.exportBoard();
     let possibleMoves = [];
+    let aiPrecision = 0;
+    let difficulty = 100;
 
-    const updateBoardState = () => {
-        aiBoard = gameBoard.exportBoard();
+    const getAvailableMoves = (board) => {
+        //reset possible moves to prevent contamination from previous calculations
         possibleMoves = [];
         for (let i = 0; i < 9; i++) {
-            if (aiBoard[i] == ' ') possibleMoves.push(i);
+            if (board[i] == ' ') possibleMoves.push(i);
         }
-        console.log(`Possible moves: ${possibleMoves}`);
         return possibleMoves;
-    }
+    };
+
+    const generateAiPrecision = () => {
+        aiPrecision = Math.floor(Math.random() * 100)
+    };
+
+    const determineAiAccuracy = () => {
+        if (generateAiPrecision() >= difficulty) {
+            console.log('Computer playing optimal choice');
+        }
+        else {
+            console.log('Computer playing random choice');
+            return selectRandomMove();
+        };
+    };
 
     const selectRandomMove = () => {
-        updateBoardState();
+        getAvailableMoves(gameBoard.exportBoard());
         let computerMove = possibleMoves[Math.floor((Math.random() * possibleMoves.length))];
         console.log(`Computer's move: ${computerMove}`);
         return computerMove;
+    };
+
+    const findBestMove = (moves, player) => {
+        let bestMove;
+        // we want to maximize the computer's move score, and minimize the players
+        if (player == 'computer') {
+            let bestScore = -100;
+            for (let i = 0; i < moves.length; i++) {
+                if (moves[i].score > bestScore) {
+                    bestScore = moves[i].score;
+                    bestMove = i;
+                };
+            };
+        } else {
+            let bestScore = 100;
+            for (let i = 0; i < moves.length; i++) {
+                if (moves[i].score < bestScore) {
+                    bestScore = moves[i].score;
+                    bestMove = i
+                };
+            };
+        };
+        return moves[bestMove];
+    };
+
+
+    const minMax = (board, player) => {
+        
+        
+        //for every position on the board create a move object
+        for (let i = 0; i < possibleMoves.length; i++) {
+            let move = {};
+            move.index = possibleMoves[i]
+        }
+
+        
+
+
+
+
+
     }
 
     return {
-        updateBoardState,
-        selectRandomMove
+        getAvailableMoves,
+        selectRandomMove,
+        generateAiPrecision,
+        determineAiAccuracy,
+        findBestMove
     };
 })();
 
@@ -109,7 +167,7 @@ var gameController = (() => {
     let computerScore = 0;
 
     const computerTurn = () => {
-        gameBoard.assignValue(aiController.selectRandomMove(), computer.getGamePiece());
+        gameBoard.assignValue(aiController.determineAiAccuracy(), computer.getGamePiece());
         displayController.updateSpaces();
     };
 
