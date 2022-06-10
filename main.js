@@ -11,17 +11,17 @@ const gameBoard = (() => {
     };
 
     const getSpace = (index) => {
-        board[index]
-    }
+        board[index];
+    };
 
     function assignValue(index, value) {
         board[index] = value;
-        getState()
+        getState();
     };
 
     const getValue = (index) => {
-        return board[index]
-    }
+        return board[index];
+    };
 
     function clear() {
         for (let i = 0; i < board.length; i++) {
@@ -33,8 +33,8 @@ const gameBoard = (() => {
     };
 
     const exportBoard = () => {
-        return board
-    }
+        return board;
+    };
     
     return {
         getState,
@@ -50,19 +50,19 @@ const Player = (computerPlayer, difficulty, gamePiece, score) => {
     const getValues = () => {
         console.log(`Computer: ${computerPlayer}
         \nDifficulty: ${difficulty}
-        \nGame Piece: ${gamePiece}`)
+        \nGame Piece: ${gamePiece}`);
     };
 
     const incrementScore = () => {
-        score += 1
+        score += 1;
         displayController.updateScore();
     };
 
-    const getScore = () => {return score}
+    const getScore = () => {return score};
 
     const setGamePiece = (selection) => {
-        gamePiece = selection
-    }
+        gamePiece = selection;
+    };
 
     const getGamePiece = () => {return gamePiece};
     
@@ -93,7 +93,7 @@ var aiController = (() => {
         updateBoardState();
         let computerMove = possibleMoves[Math.floor((Math.random() * possibleMoves.length))];
         console.log(`Computer's move: ${computerMove}`);
-        return computerMove
+        return computerMove;
     }
 
     return {
@@ -103,18 +103,18 @@ var aiController = (() => {
 })();
 
 var gameController = (() => {
-    let computer = Player(true, 'Easy', 'O')
-    let user = Player(false, 'None', 'X')
+    let computer = Player(true, 'Easy', 'O');
+    let user = Player(false, 'None', 'X');
     let playerScore = 0;
     let computerScore = 0;
 
     const computerTurn = () => {
-        gameBoard.assignValue(aiController.selectRandomMove(), computer.getGamePiece())
+        gameBoard.assignValue(aiController.selectRandomMove(), computer.getGamePiece());
         displayController.updateSpaces();
     };
 
     const playerTurn = (index) => {
-        console.log(`Player's move: ${index}`)
+        console.log(`Player's move: ${index}`);
         gameBoard.assignValue(index, user.getGamePiece());
         displayController.updateSpaces();
     };
@@ -126,13 +126,12 @@ var gameController = (() => {
             if (gameBoard.getValue(index) == ' ') {
                 playerTurn(index);
                 if (checkForWinner() == false) {
-                    computerTurn()
-                    checkForWinner()
-                }
-                //computerTurn();
-                //if (checkForWinner() == true) return
+                    computerTurn();
+                    checkForWinner();
+                };
+
             }
-            else console.log("Please select a valid square.")
+            else console.log("Please select a valid square.");
         };
         if (user.getGamePiece() == 'O') {
             if (index == 'first') {
@@ -143,7 +142,7 @@ var gameController = (() => {
                 if (checkForWinner() == false) {
                     computerTurn()
                     checkForWinner()
-                }
+                };
             }
             else console.log("Please select a valid square.");
         };
@@ -165,18 +164,17 @@ var gameController = (() => {
         // iterate over winning sets to determine if they are full of X or O
         for (let i = 0; i < winningSets.length; i++) {
             for (let j = 0; j < 3; j++) {
-                let spaceValue = gameBoard.getValue(winningSets[i][j])
+                let spaceValue = gameBoard.getValue(winningSets[i][j]);
                 if (spaceValue == "X") consecutiveX++;
                 if (spaceValue == "O") consecutiveO++;
-            }
-            //console.log (`Set: [${winningSets[i]}], X: ${consecutiveX}, O: ${consecutiveO}`)
+            };
             if (consecutiveX == 3)  {
-                console.log(`Winning Set: [${winningSets[i]}]`)
+                console.log(`Winning Set: [${winningSets[i]}]`);
                 displayController.showWinningMoves(winningSets[i]);
                 displayController.lockButtons();
                 gameController.scoreGame('X');
                 return 
-            }
+            };
             if (consecutiveO == 3) {
                 displayController.showWinningMoves(winningSets[i]);
                 displayController.lockButtons();
@@ -188,7 +186,7 @@ var gameController = (() => {
                 consecutiveO = 0;
             };
         };
-        return false
+        return false;
     };
 
     const setGamePiece = (player, selection) => {
@@ -197,12 +195,11 @@ var gameController = (() => {
         user.getValues();
         gameBoard.clear();
         displayController.unlockButtons();
-        }
+        };
         if (player == 'computer') {
             computer.setGamePiece(selection);
-            //computer.getValues();
-        }
-    }
+        };
+    };
 
     const scoreGame = (winningPiece) => {
         console.log(`Player Piece: ${user.getGamePiece()} Winning Piece: ${winningPiece}`)
@@ -210,20 +207,20 @@ var gameController = (() => {
             playerScore += 1;
             console.log(`playerScore: ${playerScore}`)
             displayController.updateScore();
-        }
+        };
         if (computer.getGamePiece() == winningPiece) {
             computerScore += 1;
             console.log(`computerScore: ${computerScore}`)
             displayController.updateScore();
-        }
-    }
+        };
+    };
 
     const returnPlayerScore = () => {
-        return playerScore
+        return playerScore;
     };
 
     const returnComputerScore = () => {
-        return computerScore
+        return computerScore;
     };
 
     return {
@@ -251,7 +248,7 @@ var displayController = (() => {
     const updateSpaces = () => {
         for (let i = 0; i < visualBoard.length; i++) {
             visualBoard[i].textContent = gameBoard.getValue(i);
-        }
+        };
     };
 
     const updateButtons = (buttonPressed) => {
@@ -282,7 +279,7 @@ var displayController = (() => {
 
     const clearWinningMoves = () => {
         for (let i = 0; i < visualBoard.length; i++) {
-            visualBoard[i].classList.remove('winning-move')
+            visualBoard[i].classList.remove('winning-move');
         };
     };
 
@@ -290,13 +287,13 @@ var displayController = (() => {
         for (let i = 0; i < visualBoard.length; i++) {
             visualBoard[i].disabled = true;
         };
-    }
+    };
 
     const unlockButtons = () => {
         for (let i = 0; i < visualBoard.length; i++) {
             visualBoard[i].disabled = false;
         };
-    }
+    };
 
     const _init = (() => {
         for (let i = 0; i < visualBoard.length; i++) {
@@ -306,9 +303,8 @@ var displayController = (() => {
 
         // event listener to change computer difficulty
 
-        xButton.addEventListener('click', () => updateButtons('X'))
-        oButton.addEventListener('click', () => updateButtons('O'))
-
+        xButton.addEventListener('click', () => updateButtons('X'));
+        oButton.addEventListener('click', () => updateButtons('O'));
     })();
 
     return {
