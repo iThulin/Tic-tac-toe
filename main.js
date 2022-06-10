@@ -78,6 +78,8 @@ const Player = (computerPlayer, difficulty, gamePiece, score) => {
 var aiController = (() => {
     let aiBoard = gameBoard.exportBoard();
     let possibleMoves = [];
+    let aiPrecision = 0;
+    let difficulty = 100;
 
     const updateBoardState = () => {
         aiBoard = gameBoard.exportBoard();
@@ -87,6 +89,21 @@ var aiController = (() => {
         }
         console.log(`Possible moves: ${possibleMoves}`);
         return possibleMoves;
+    };
+
+    const generateAiPrecision = () => {
+        aiPrecision = Math.floor(Math.random() * 100)
+    };
+
+    const determineAiAccuracy = () => {
+        if (generateAiPrecision() >= difficulty) {
+            
+            console.log('Computer playing optimal choice');
+        }
+        else {
+            console.log('Computer playing random choice');
+            return selectRandomMove();
+        };
     }
 
     const selectRandomMove = () => {
@@ -98,7 +115,9 @@ var aiController = (() => {
 
     return {
         updateBoardState,
-        selectRandomMove
+        selectRandomMove,
+        generateAiPrecision,
+        determineAiAccuracy
     };
 })();
 
@@ -109,7 +128,7 @@ var gameController = (() => {
     let computerScore = 0;
 
     const computerTurn = () => {
-        gameBoard.assignValue(aiController.selectRandomMove(), computer.getGamePiece());
+        gameBoard.assignValue(aiController.determineAiAccuracy(), computer.getGamePiece());
         displayController.updateSpaces();
     };
 
